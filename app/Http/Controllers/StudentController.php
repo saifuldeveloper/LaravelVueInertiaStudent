@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ClassesResouce;
 use App\Http\Resources\StudentResource;
+use App\Models\Classes;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -28,7 +30,14 @@ class StudentController extends Controller
      */
     public function create()
     {
-        //
+        
+        $classes = ClassesResouce::collection(Classes::all());
+
+        return inertia('Students/Create',
+            [
+                'classes' => $classes,
+            ]
+        );
     }
 
     /**

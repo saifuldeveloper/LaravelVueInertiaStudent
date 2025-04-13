@@ -2,7 +2,7 @@
 
 import MagnifyingGlass from '@/Components/Icons/MagnifyingGlass.vue';
 import Pagination from '@/Components/Pagination.vue';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 
 defineProps({
@@ -13,36 +13,25 @@ defineProps({
 });
 
 console.log(usePage().props.students);
-
-
-
-
 </script>
 
 <template>
     <div class="bg-gray-100 py-1-">
         <div class="mx-auto max-w-7xl">
             <div class="px-4 sm:px-6 lg:px-8">
-                <div class="sm:flex sm:items-center">
-                    <div class="sm:flex-atuo">
+                <div class="sm:flex sm:items-center sm:justify-between">
+                    <div class="sm:flex-atuo ">
                         <h1 class="text-2xl font-bold leading-tight text-gray-900">Students</h1>
                         <p class="mt-t text-sm text-gray-700">
                             A list of all students
                         </p>
-
-
-
-
-
                     </div>
 
                     <div class="mt-4 sm:mt-0 sm:ml-4 sm:flex-none">
-
-                        <a href="#"
+                        <Link :href="route('students.create')"
                             class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto">
-
-                            Add Student
-                        </a>
+                        Add Student
+                        </Link>
                     </div>
                 </div>
 
@@ -128,7 +117,7 @@ console.log(usePage().props.students);
                                 </table>
                             </div>
 
-                          <Pagination  :data="students" />
+                            <Pagination :data="students" />
                         </div>
                     </div>
                 </div>
