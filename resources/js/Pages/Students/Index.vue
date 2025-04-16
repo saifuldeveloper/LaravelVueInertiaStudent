@@ -3,7 +3,8 @@
 import MagnifyingGlass from '@/Components/Icons/MagnifyingGlass.vue';
 import Pagination from '@/Components/Pagination.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
 
 
 defineProps({
@@ -13,14 +14,62 @@ defineProps({
     },
 });
 
+let search = ref(usePage().props.search),
+    pageNumber = ref(1);
 
-const  deleteForm = useForm({});
+let studentUrl = computed(() => {
+
+    let url = new URL(route('students.index'));
+    url.searchParams.append('page', pageNumber.value);
+
+    if (search.value) {
+        url.searchParams.append('search', search.value);
+    }
+
+    return url;
+});
+
+
+const updatedPageNumber = (link) => {
+    pageNumber.value = link.url.split("=")[1];
+};
+
+
+watch(
+    () => studentUrl.value,
+    (updateStudentUrl) => {
+        router.visit(updateStudentUrl, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+
+        })
+    });
+
+
+watch(
+    () => search.value,
+    (value) => {
+
+        if(value){
+            pageNumber.value = 1;
+        }
+    }
+);
+
+
+
+
+
+
+
+const deleteForm = useForm({});
 
 const deleteStudent = (studentId) => {
     if (confirm("Are you sure you want to delete this student?")) {
         deleteForm.delete(route("students.destroy", studentId));
     }
-    
+
 };
 
 console.log(usePage().props.students);
@@ -62,8 +111,7 @@ console.log(usePage().props.students);
                                 <MagnifyingGlass />
 
                             </div>
-
-                            <input type="text" placeholder="Search for students..." id="search" class="block  rounded-lg border-0 py-2 pl-10 text-gray-900
+                            <input v-model="search" type="text" placeholder="Search for students..." id="search" class="block  rounded-lg border-0 py-2 pl-10 text-gray-900
                             ring-1 ring-insert ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-insert focus:ring-blue-600
                             sm:text-ms sm:leading-6" />
 
@@ -129,10 +177,10 @@ console.log(usePage().props.students);
                                                     {{ student.created_at }}</td>
                                                 <td
                                                     class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    <Link 
-                                                    :href="route('students.edit', student.id)"
-                                                     class="text-blue-600 hover:text-blue-900">Edit</Link> 
-                                                    <button @click="deleteStudent(student.id)"  class="text-red-600 hover:text-red-900">Delete</button>
+                                                    <Link :href="route('students.edit', student.id)"
+                                                        class="text-blue-600 hover:text-blue-900">Edit</Link>
+                                                    <button @click="deleteStudent(student.id)"
+                                                        class="text-red-600 hover:text-red-900">Delete</button>
                                                 </td>
                                             </tr>
 
@@ -141,7 +189,7 @@ console.log(usePage().props.students);
                                     </table>
                                 </div>
 
-                                <Pagination :data="students" />
+                                <Pagination :data="students" :updatedPageNumber="updatedPageNumber" />
                             </div>
                         </div>
                     </div>
